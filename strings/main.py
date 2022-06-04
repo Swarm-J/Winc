@@ -32,5 +32,5 @@ full_chant = (f'{player[:player.find(" ")]}! ') * len(player[:player.find(" ")])
 chant = full_chant[:-1]
 print(chant)
 
-good_chant = chant[-1] != ' '
+good_chant = chant[:-1] != ' '
 print(good_chant)
