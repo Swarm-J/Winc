@@ -17,20 +17,20 @@ print(scorers)
 report = f"{scorer_1} scored in the {goal_0}nd minute\n{scorer_2} scored in the {goal_1}th minute"
 print(report)
 
-player = "Frank Rijkaard"
+player = "Marco van Basten"
 
-first_name = player[player.find("Frank"):5]
-print(first_name)
+first_name = player[:player.find(" ")]
+print(len(first_name))
 
-last_name_len = len(player[player.find("Rijkaard"):])
+last_name_len = len(player[player.find(" ") + 1:])
 print(last_name_len)
 
-name_short = f"{player[0]}. {player[player.find('Rijkaard'):]}"
+name_short = f"{player[0]}.{player[player.find(' '):]}"
 print(name_short)
 
-full_chant = (f'{player[player.find("Frank"):5]}! ') * len(player[player.find("Frank"):5])
+full_chant = (f'{player[:player.find(" ")]}! ') * len(player[:player.find(" ")])
 chant = full_chant[:-1]
 print(chant)
 
-good_chant = chant[len(chant) - 1] != ' '
+good_chant = chant[-1] != ' '
 print(good_chant)
