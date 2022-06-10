@@ -36,18 +36,20 @@ def pull(m1, m2, d):
     return f
 
 
-check = greet('Bob', "What's up, <name>!")
-print(check)
-c = greet('Bob')
-print(c)
+if __name__ == "__main__":
 
-test = force(50)
-print(test)
-test_again = force(50, 'mars')
-print(test_again)
+    check = greet('Bob', "What's up, <name>!")
+    print(check)
+    c = greet('Bob')
+    print(c)
 
-example1 = pull(800, 1500, 3)
-print(example1)
+    test = force(50)
+    print(test)
+    test_again = force(50, 'mars')
+    print(test_again)
 
-example2 = pull(0.1, 5.972*1024**24, 6.371*10**6)
-print(example2)
+    example1 = pull(800, 1500, 3)
+    print(example1)
+
+    example2 = pull(0.1, 5.972*1024**24, 6.371*10**6)
+    print(example2)

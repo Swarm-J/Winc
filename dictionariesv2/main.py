@@ -55,15 +55,18 @@ def add_biometric_data(passport, type, value, date):
 
     return passport
 
-js = create_passport('Julian Schinkel', '1987-01-1987', 'Zwolle', 1.86, 'Netherlands')
-print(js)
 
-d = {'name': 'Julian Schinkel', 'date_of_birth': '1987-01-1987', 'place_of_birth': 'Zwolle', 'height': 1.86, 'nationality': 'Netherlands', 'stamps': ['Belgium'], 'biometric': {'eye_color_left': {'value': 'blue', 'date': '2022-06-06'}}}
-print(d)
+if __name__ == "__main__":
 
-kekw = add_stamp(d, 'Germany')
-print(kekw)
+    js = create_passport('Julian Schinkel', '1987-01-1987', 'Zwolle', 1.86, 'Netherlands')
+    print(js)
 
-test = {'name': 'Julian Schinkel', 'date_of_birth': '1987-01-1987', 'place_of_birth': 'Zwolle', 'height': '1.86', 'nationality': 'Netherlands', 'biometric': {'eye_color_left': {'value': 'blue', 'date': '2022-06-06'}}}
-bio = add_biometric_data(test,"eye_color_right", "red", "2022-06-07")
-print(bio)
+    d = {'name': 'Julian Schinkel', 'date_of_birth': '1987-01-1987', 'place_of_birth': 'Zwolle', 'height': 1.86, 'nationality': 'Netherlands', 'stamps': ['Belgium'], 'biometric': {'eye_color_left': {'value': 'blue', 'date': '2022-06-06'}}}
+    print(d)
+
+    kekw = add_stamp(d, 'Germany')
+    print(kekw)
+
+    test = {'name': 'Julian Schinkel', 'date_of_birth': '1987-01-1987', 'place_of_birth': 'Zwolle', 'height': '1.86', 'nationality': 'Netherlands', 'biometric': {'eye_color_left': {'value': 'blue', 'date': '2022-06-06'}}}
+    bio = add_biometric_data(test,"eye_color_right", "red", "2022-06-07")
+    print(bio)
