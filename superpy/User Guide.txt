@@ -1,0 +1,187 @@
+The 'Supermarket Inventory Tracker' is build with 3 modules that are central
+to the program. The modules are argparse, csv and datetime. Argparse is used
+to make the cli for the user, while csv is used to store the data regarding
+inventory, revenue, costs, profit and buy/sell history. Datetime is important
+because the program is not only working with expiry dates, but also has an
+internal sense of time regarding the date. 
+
+The program also makes use of two non-trivial modules. The first is Rich, which
+basically makes everything more readable due the use of different colors. 
+The second module is Matplotlib, which, in this case, takes care of a visual representation of the data.
+The program, when prompted, will show a bar diagram.
+
+The cli handles the following basic commands: 
+['buy', 'sell', 'report-inventory', 'report-profit', 'report-costs', 'report-revenue', 'time']
+
+Every user entry has to start with one of the above commands. The user will get a message if
+one of these commands is not used. Furthermore the user is able to choose from a number of
+optional arguments. The optional arguments are:
+
+    parser.add_argument('-p','--price', nargs=1, type=float, help='used to set a price for a specific product')
+    parser.add_argument('-a','--amount', nargs=1, type=float, help='used to set the amount for a specific product')
+    parser.add_argument('--product-name', help='used to specify the product')
+    parser.add_argument('--expiration-date', nargs=1, help='used to set the date when a specified product is overdue')
+    parser.add_argument('--save-data', action='store_true', help='saves the data to a csv-file. Is applicable buy history, sold history and inventory')
+    
+    group.add_argument('-n','--now', action='store_true', help='combined with report-inventory this returns a report regarding stock and expired products')
+    group.add_argument('-d' ,'--date', help='returns value(s) of a specific moment in time. Can be a day, month or year')
+    group.add_argument('-t', '--today', action='store_true', help='combined with i.e. report-profit it returns values regarding the current day')
+    group.add_argument('-y', '--yesterday', action='store_true', help='combined with i.e. report-profit it returns values regarding yesterday')
+    group.add_argument('--advance-time', type=int, help='forwards time with the specified amount of day(s)')
+    group.add_argument('--current-date', action='store_true', help='returns the date that is internally used by the program')
+    group.add_argument('-r', '--reset', action='store_true', help='resets the date in use to current date outside of program')
+    group.add_argument('-g', '--graph', action='store_true', help='returns a graph of the current year regarding revenue, costs or profit')
+
+The optional arguments are divided into two groups as one can see. Four individual optional arguments and the rest are grouped
+together. The reason to combine the botton seven into a mutually exclusive group has a logical ground. For example, mixing
+yesterday and today in one command does not make any sense at all. The user will get a error message if yesterday and today are used
+in the same command.
+
+$ python .\superpy\main.py report-inventory --yesterday --now
+The above command returns:
+'error: argument -n/--now: not allowed with argument -y/--yesterday'
+
+The buy/sell command acts in a similiar way. The only difference is that the expiration date is
+omitted when using the sell command. So if the user wants to buy bananas, the entry would look
+like this:
+
+$ python program.py buy --product-name banana --amount 50 --price 0.8 --expiration-date 2022-06-28 
+The above command returns:
+'Successfully bought 50 banana(s) for a total of 40.0'
+
+The buy entry will get logged into the bought.csv. The bougt.csv logs the following columns:
+id, product_name, buy_date, amount, buy_price, expiration_date, total_costs
+Every buy entry has its own unique id which is handled by the function create_id(filename). 'bought.csv' would
+be the argument in this case. 
+That id is then used in the sold.csv to make it clear which bought product is being sold.
+
+The buy command will also update the inventory.csv. The column names that are used consist out
+product_name, amount, buy_price, expiration_date. Each column gets updated accordingly.
+
+Now let's take a look at selling.
+
+$ python program.py sell --product-name banana --amount 25 --price 1
+The above command returns:
+'Successfully sold 25 banana for a total of 25.0'
+
+In case of selling more than there is in stock and/or when selling expired products, it will throw up a message.
+'ERROR: Not enough product(s) in stock and/or Expiration date reached.'
+And if the product is unknown: 'ERROR: Product not in stock'.
+
+A successful sell will result in a entry in the sold.csv. The file holds the following columns:
+id, bought_id, sell_date, amount, sell_price, revenue
+The entry hold its unique id, generated by create_id(filename).
+The get_bought_id(product) function takes care of fetching the right buy_id. The date is being checked against the current
+date to make sure the right buy_id is being used. The last column will be used to return revenue and to calculate profits.
+
+The --save-data option can be combined with the buy/sell command and a --date to specify the period. A command could look like:
+
+$ python program.py sell --save-data --date 2022-06-29
+
+The above will write the sell history from the specified date to a csv-file named 'sell_data' or 'buy_data' if buy was used.
+
+The four commands report-revenue, report-costs, report-profit and lastly report-inventory can all be used in a similar way.
+The optional argument '--graph' is a feature that can only be used in combination with revenue, costs or profit. The feature is
+build with the use pof Matplotlib module. The following command:
+
+$ python program.py report-costs --graph
+
+returns a bar diagram of the current year. The x-axis shows the months and the y-axis shows the associated values. The bars
+which show on the x-axis hold the value of the month based on the kind of report.
+
+Some other example commands are:
+
+$ python program.py report-costs --today
+'Today's costs so far: 40.0'
+
+$ python program.py report-revenue --yesterday
+'Yesterday's revenue: 20'
+
+$ python program.py report-profit --date 2022
+'-36.7'
+Negative result means that their has been a loss over 2022.
+
+$ python program.py report-profit --date 2022-06
+'-36.7'
+
+$ python program.py report-profit --date 2022-06-26
+'-15.0'
+
+Report-inventory returns a table regarding current products during the specified timeslot entered by the user.
+The difference between the previous report commands and report-inventory is the optional --now command.
+
+$ python program.py report-inventory --now
+
+
+                        Inventory
+┏━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
+┃  Released  ┃ Version Number ┃ Description ┃  Released  ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━┩
+│   apple    │       0        │     0.5     │ 2022-06-14 │
+│   banana   │       25       │     0.8     │ 2022-06-28 │
+│  broccoli  │       7        │     0.6     │ 2022-06-17 │
+│  cookies   │       0        │     0.8     │ 2022-07-31 │
+│    milk    │       10       │      1      │ 2022-06-25 │
+│   orange   │       15       │     0.7     │ 2022-06-17 │
+│   steak    │       5        │     1.5     │ 2022-06-17 │
+│ toothpaste │       4        │     0.4     │ 2022-09-12 │
+│   water    │       0        │     0.3     │ 2022-06-25 │
+└────────────┴────────────────┴─────────────┴────────────┘
+Products that are out of stock: ['apple', 'cookies', 'water']
+
+Products that are expired: ['broccoli', 'milk', 'orange', 'steak']
+
+Products that are close to expiration: []
+
+The above command returns a table with the use of the Rich module. In specific the table feature.
+It makes the data very clear and readable for the user, in contrast to printing the rows from the csv file.
+The table is showing every product that has been bought. It then notifies the user which
+products are overdue or close to expiration.
+
+$ python program.py report-inventory --yesterday
+
+                       Inventory
+┏━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
+┃ Released ┃ Version Number ┃ Description ┃  Released  ┃
+┡━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━┩
+│   milk   │       10       │      1      │ 2022-06-25 │
+│  water   │       0        │     0.3     │ 2022-06-25 │
+└──────────┴────────────────┴─────────────┴────────────┘
+
+$ python program.py report-inventory  --date 2022-06-17
+
+                       Inventory
+┏━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
+┃ Released ┃ Version Number ┃ Description ┃  Released  ┃
+┡━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━┩
+│ broccoli │       7        │     0.6     │ 2022-06-17 │
+│  orange  │       15       │     0.7     │ 2022-06-17 │
+│  steak   │       5        │     1.5     │ 2022-06-17 │
+└──────────┴────────────────┴─────────────┴────────────┘
+
+
+The command that might need more explanation is 'time'. The functionality behind this command works with a
+text file 'time.txt'. There is only one line of text that holds a datetime.datetime.now() object. The date it
+holds is the one that is prompted by the most recent user. The date can only be one that has passed the current
+realtime date. The program returns 'Rewinding time is not allowed!', if the user tries to enter a negative number.
+
+The user has the ability to advance time, so one of the important steps when using the
+program is to check the internal date. Every command is subjective to the internal time.
+
+In practice this would look like:
+
+$ python program.py time --advance-time 2
+The above command returns:
+'Advanced current date with 2 days. Date currently in use is: 2022-06-27'
+
+To check current date in use by program:
+
+$ python program.py time --current-date
+The above command returns:
+'Date currently in use: 2022-06-25'
+
+The user can also reset the date back to realtime:
+
+$ python program.py time --reset
+The above command returns:
+'Date reset to realtime: 2022-06-26'

@@ -1,0 +1,9 @@
+product_name,amount,buy_price,expiration_date
+apple,0,0.5,2021-06-14
+orange,15,0.7,2021-06-17
+steak,5,1.5,2022-06-17
+milk,20,1,2022-06-16
+cookies,0,0.8,2022-07-31
+broccoli,7,0.6,2022-06-17
+toothpaste,4,0.4,2022-09-12
+water,0,0.3,2022-06-25

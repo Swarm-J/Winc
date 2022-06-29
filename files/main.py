@@ -16,9 +16,10 @@ def clean_cache():
         print("Cache directory created")
     except FileExistsError:
         print("Directory already exists. Deleting files in directory")
-        files = glob(path)
-        for f in files:
-            os.remove(f)
+        files = glob(path)[0]
+        print(files)
+        for f in os.listdir(files):
+            os.remove(os.path.join(files, f))
     except FileNotFoundError:
         print("Parent directory does not exist")
 
