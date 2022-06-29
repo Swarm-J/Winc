@@ -54,7 +54,7 @@ class Supermarket():
             plt.xlabel('months')
 
         plt.bar(months, values)
-        # getattr((months, values), 'addlabels')
+        self.addlabels(months, values)
         plt.show()
 
     @staticmethod
@@ -144,93 +144,100 @@ class Supermarket():
         return bought_id
 
     def sell(self, args):
-        if args.save_data:
-            self.save_data('sell_data', args.date)
-        else:
-        
-            amount_for_sale = float(self.check_stock(args.product_name)[1])
-            amount = args.amount[0]
-
-            if amount <= amount_for_sale:
-                id = self.create_id('sold.csv')
-                bought_id = self.get_bought_id(args.product_name)
-                sell_date = datetime.date.today()
-                sell_price = args.price[0]
-                total_revenue = amount * sell_price
-
-                with open('sold.csv', 'a', newline='') as sold:
-                    soldwriter = csv.writer(sold)
-                    soldwriter.writerow([id, bought_id, sell_date, int(amount), sell_price, total_revenue])
-                
-                lines = []
-                with open('inventory.csv', 'r', newline='') as inventory:
-                    inventoryreader = csv.reader(inventory)
-                    for row in inventoryreader:
-                        if args.product_name in row:
-                            row[1] = int(amount_for_sale - amount)
-                            lines.append(row)
-                        else:
-                            lines.append(row)
-                with open('inventory.csv', 'w', newline='') as inventory:
-                    inventorywriter = csv.writer(inventory)
-                    inventorywriter.writerows(lines)            
-                print(f'Successfully sold {int(amount)} {args.product_name} for a total of {total_revenue}')
-            elif amount_for_sale == '0':
-                print('ERROR: Not enough product(s) in stock and/or Expiration date reached.')
+        try:
+            if args.save_data:
+                self.save_data('sell_data', args.date)
             else:
-                print('ERROR: Product not in stock')
+            
+                amount_for_sale = float(self.check_stock(args.product_name)[1])
+                amount = args.amount[0]
+
+                if amount <= amount_for_sale:
+                    id = self.create_id('sold.csv')
+                    bought_id = self.get_bought_id(args.product_name)
+                    sell_date = datetime.date.today()
+                    sell_price = args.price[0]
+                    total_revenue = amount * sell_price
+
+                    with open('sold.csv', 'a', newline='') as sold:
+                        soldwriter = csv.writer(sold)
+                        soldwriter.writerow([id, bought_id, sell_date, int(amount), sell_price, total_revenue])
+                    
+                    lines = []
+                    with open('inventory.csv', 'r', newline='') as inventory:
+                        inventoryreader = csv.reader(inventory)
+                        for row in inventoryreader:
+                            if args.product_name in row:
+                                row[1] = int(amount_for_sale - amount)
+                                lines.append(row)
+                            else:
+                                lines.append(row)
+                    with open('inventory.csv', 'w', newline='') as inventory:
+                        inventorywriter = csv.writer(inventory)
+                        inventorywriter.writerows(lines)            
+                    print(f'Successfully sold {int(amount)} {args.product_name} for a total of {total_revenue}')
+                elif amount_for_sale == '0':
+                    print('ERROR: Not enough product(s) in stock and/or Expiration date reached.')
+                else:
+                    print('ERROR: Product not in stock')
+        except TypeError:
+            print('That is not a valid command. Check the guide for help.')
         
     def buy(self, args):
-        id = self.create_id('bought.csv')
-        product_name = args.product_name
-        buy_date = datetime.date.today()
-        amount = args.amount[0]
-        buy_price = args.price[0]
-        expiration_date = args.expiration_date[0]
-        total_costs = amount * buy_price
-        now = self.get_date()
 
-        # check if expiration is after current date
-        if (datetime.datetime.strptime(expiration_date, "%Y-%m-%d") - now).days > 0:
-            new_product = True
-            with open('inventory.csv', 'r', newline='') as inventory:
-                inventoryreader = csv.reader(inventory)
-                for row in inventoryreader:
-                    if product_name in row:
-                        new_product = False
+        try:
+            id = self.create_id('bought.csv')
+            product_name = args.product_name
+            buy_date = datetime.date.today()
+            amount = args.amount[0]
+            buy_price = args.price[0]
+            expiration_date = args.expiration_date[0]
+            total_costs = amount * buy_price
+            now = self.get_date()
 
-            if new_product:
-                with open('inventory.csv', 'a', newline='') as inventory:
-                    inventorywriter = csv.writer(inventory)
-                    inventorywriter.writerow([product_name, int(amount), buy_price, expiration_date])
-                            
-            else: 
-                lines = []
-
+            # check if expiration is after current date
+            if (datetime.datetime.strptime(expiration_date, "%Y-%m-%d") - now).days > 0:
+                new_product = True
                 with open('inventory.csv', 'r', newline='') as inventory:
                     inventoryreader = csv.reader(inventory)
                     for row in inventoryreader:
                         if product_name in row:
-                            row[1] = int(amount) + int(row[1])
-                            row[2] = buy_price
-                            row[3] = expiration_date
+                            new_product = False
 
-                            lines.append(row)
-                        else:
-                            lines.append(row)
-                    with open('inventory.csv', 'w', newline='') as inventory:
+                if new_product:
+                    with open('inventory.csv', 'a', newline='') as inventory:
                         inventorywriter = csv.writer(inventory)
-                        inventorywriter.writerows(lines)
-                
-            with open('bought.csv', 'a', newline='') as bought:
-                boughtwriter = csv.writer(bought)
-                boughtwriter.writerow([id, product_name, buy_date, int(amount), buy_price, expiration_date, total_costs])
-        
-            print(f'Successfully bought {int(amount)} {product_name}(s) for a total of {total_costs}')
-        elif args.save_data:
-            self.save_data('buy_data', args.date)
-        else:
-            print("Choose an expiration date that surpasses current date.")
+                        inventorywriter.writerow([product_name, int(amount), buy_price, expiration_date])
+                                
+                else: 
+                    lines = []
+
+                    with open('inventory.csv', 'r', newline='') as inventory:
+                        inventoryreader = csv.reader(inventory)
+                        for row in inventoryreader:
+                            if product_name in row:
+                                row[1] = int(amount) + int(row[1])
+                                row[2] = buy_price
+                                row[3] = expiration_date
+
+                                lines.append(row)
+                            else:
+                                lines.append(row)
+                        with open('inventory.csv', 'w', newline='') as inventory:
+                            inventorywriter = csv.writer(inventory)
+                            inventorywriter.writerows(lines)
+                    
+                with open('bought.csv', 'a', newline='') as bought:
+                    boughtwriter = csv.writer(bought)
+                    boughtwriter.writerow([id, product_name, buy_date, int(amount), buy_price, expiration_date, total_costs])
+            
+                print(f'Successfully bought {int(amount)} {product_name}(s) for a total of {total_costs}')
+            elif args.save_data:
+                self.save_data('buy_data', args.date)
+            else:
+                print("Choose an expiration date that surpasses current date.")
+        except TypeError:
+            print('That is not a valid command. Check the guide for help.')
 
     @staticmethod
     def save_data(filename, date):
@@ -477,7 +484,7 @@ class Supermarket():
                             table.add_row(row[0], row[1], row[2], row[3])
                 console.print(table)  
             else: 
-                print('Please add options: now, yesterday or specific date')
+                print('That is not a valid command. Please add options: now, yesterday or specific date')
 
 
     # create csv files with dummy data
