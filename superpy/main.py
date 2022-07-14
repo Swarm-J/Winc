@@ -50,7 +50,6 @@ def main():
     elif args.basic_command == 'report-profit':
         report_profit(args)
     elif args.basic_command == 'report-costs':
-        print(args)
         report_costs(args)
     elif args.basic_command == 'report-revenue':
         report_revenue(args)
