@@ -114,19 +114,18 @@ $ python program.py report-inventory --now
 
 
                         Inventory
-┏━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
-┃  Released  ┃ Version Number ┃ Description ┃  Released  ┃
-┡━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━┩
-│   apple    │       0        │     0.5     │ 2022-06-14 │
-│   banana   │       25       │     0.8     │ 2022-06-28 │
-│  broccoli  │       7        │     0.6     │ 2022-06-17 │
-│  cookies   │       0        │     0.8     │ 2022-07-31 │
-│    milk    │       10       │      1      │ 2022-06-25 │
-│   orange   │       15       │     0.7     │ 2022-06-17 │
-│   steak    │       5        │     1.5     │ 2022-06-17 │
-│ toothpaste │       4        │     0.4     │ 2022-09-12 │
-│   water    │       0        │     0.3     │ 2022-06-25 │
-└────────────┴────────────────┴─────────────┴────────────┘
+┏━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Product Name ┃ Amount ┃ Buy Price ┃ Expiration Date ┃
+┡━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│    apple     │   0    │    0.5    │   2021-06-14    │
+│   broccoli   │   7    │    0.6    │   2022-06-17    │
+│   cookies    │   0    │    0.8    │   2022-07-31    │
+│     milk     │   20   │     1     │   2022-06-16    │
+│    orange    │   15   │    0.7    │   2021-06-17    │
+│    steak     │   5    │    1.5    │   2022-06-17    │
+│  toothpaste  │   4    │    0.4    │   2022-09-12    │
+│    water     │   1    │    0.3    │   2022-06-29    │
+└──────────────┴────────┴───────────┴─────────────────┘
 Products that are out of stock: ['apple', 'cookies', 'water']
 
 Products that are expired: ['broccoli', 'milk', 'orange', 'steak']
@@ -139,26 +138,25 @@ The table is showing every product that has been bought. It then notifies the us
 products are overdue or close to expiration.
 
 $ python program.py report-inventory --yesterday
-
                        Inventory
-┏━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
-┃ Released ┃ Version Number ┃ Description ┃  Released  ┃
-┡━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━┩
-│   milk   │       10       │      1      │ 2022-06-25 │
-│  water   │       0        │     0.3     │ 2022-06-25 │
-└──────────┴────────────────┴─────────────┴────────────┘
+┏━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Product Name ┃ Amount ┃ Buy Price ┃ Expiration Date ┃
+┡━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+└──────────────┴────────┴───────────┴─────────────────┘
+
+Inventory was empty due to expired products or 0 items for any products. The inventory.csv file
+confirms the output.
+
 
 $ python program.py report-inventory  --date 2022-06-17
 
                        Inventory
-┏━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
-┃ Released ┃ Version Number ┃ Description ┃  Released  ┃
-┡━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━┩
-│ broccoli │       7        │     0.6     │ 2022-06-17 │
-│  orange  │       15       │     0.7     │ 2022-06-17 │
-│  steak   │       5        │     1.5     │ 2022-06-17 │
-└──────────┴────────────────┴─────────────┴────────────┘
-
+┏━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Product Name ┃ Amount ┃ Buy Price ┃ Expiration Date ┃
+┡━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│   broccoli   │   7    │    0.6    │   2022-06-17    │
+│    steak     │   5    │    1.5    │   2022-06-17    │
+└──────────────┴────────┴───────────┴─────────────────┘
 
 The command that might need more explanation is 'time'. The functionality behind this command works with a
 text file 'time.txt'. There is only one line of text that holds a datetime.datetime.now() object. The date it
@@ -185,3 +183,12 @@ The user can also reset the date back to realtime:
 $ python program.py time --reset
 The above command returns:
 'Date reset to realtime: 2022-06-26'
+
+To conclude this user guide there is also the option to save your buy and sell data to a csv.
+Let's take a look at sell data. 
+
+$ python program.py sell --save-data --date 2022
+
+The above command saves the sell data from 2022 to a csv file named 'sell_data.csv'. The
+same can be done for month for i.e. --date 2022-06, or day for --date 2022-06-25. The same
+works for bought data if you replace sell for buy.

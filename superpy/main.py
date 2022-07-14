@@ -9,8 +9,6 @@ __human_name__ = "superpy"
 # Your code below this line.
 def main():
 
-    super_market = Supermarket('Notsolidl')
-
     # create parser object
     parser = argparse.ArgumentParser(description='Supermarket inventory tracker', epilog='For more detailed usage check the guide.')
     group = parser.add_mutually_exclusive_group()
@@ -24,7 +22,7 @@ def main():
 
     # optional
     parser.add_argument('-p','--price', nargs=1, type=float, help='used to set a price for a specific product')
-    parser.add_argument('-a','--amount', nargs=1, type=float, help='used to set the amount for a specific product')
+    parser.add_argument('-a','--amount', nargs=1, type=int, help='used to set the amount for a specific product')
     parser.add_argument('--product-name', help='used to specify the product')
     parser.add_argument('--expiration-date', nargs=1, help='used to set the date when a specified product is overdue')
     parser.add_argument('--save-data', action='store_true', help='saves the data to a csv-file. Is applicable buy history, sold history and inventory')
@@ -44,19 +42,20 @@ def main():
     
     # calling functions depending on type of basic command
     if args.basic_command == 'buy':
-        super_market.buy(args)
+        buy(args)
     elif args.basic_command == 'sell':
-        super_market.sell(args)
+        sell(args)
     elif args.basic_command == 'report-inventory':
-        super_market.report_inventory(args)
+        report_inventory(args)
     elif args.basic_command == 'report-profit':
-        super_market.report_profit(args)
+        report_profit(args)
     elif args.basic_command == 'report-costs':
-        super_market.report_costs(args)
+        print(args)
+        report_costs(args)
     elif args.basic_command == 'report-revenue':
-        super_market.report_revenue(args)
+        report_revenue(args)
     elif args.basic_command == 'time':
-        super_market.advance_time(args)
+        advance_time(args)
 
 
 if __name__ == "__main__":

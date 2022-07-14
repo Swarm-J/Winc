@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Your error message logic and HTML here. -->
+{% if request.args.get('error') %}
+    <h1> Incorrect Username/Password </h1>
+{% else %}
+    <h1>Please Enter Username and Password</h1>
+{% endif %}
+
+<form method="post">
+    <label for="username">Username</label>
+    <input id="username" type="text" name="username">
+    <label for="username">Password</label>
+    <input id="password" type="text" name="password">
+    <input type="submit" value="Login">
+</form>
+{% endblock content %}
+
