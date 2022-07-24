@@ -28,6 +28,12 @@ def vegetarian_dishes() -> List[models.Dish]:
                 vegetarian_dishes.append(dish)
     return vegetarian_dishes
 
+        
+"""
+return [dish for dish in models.Dish.select() if all("query for vegetarian ingredients")]
+
+"""
+
 
 def best_average_rating() -> models.Restaurant:
     """You want to know what restaurant is best
@@ -54,7 +60,13 @@ def dinner_date_possible() -> List[models.Restaurant]:
     You want to eat at around 19:00 and your date is vegan.
     Query a list of restaurants that account for these constraints.
     """
-
+    restaurants_met_requirements = []
+    restaurants = models.Restaurant.select().where(models.Restaurant.opening_time.hour <= 19).where(models.Restaurant.closing_time.hour >= 19)
+    for restaurant in restaurants:
+        if any((all(ingredient.is_vegan for ingredient in dish.ingredients)) for dish in restaurant.dish_set.select()):     # dish_set is default name for backref to model.Dish
+            restaurants_met_requirements.append(restaurant)
+    return restaurants_met_requirements
+ 
 
 def add_dish_to_menu() -> models.Dish:
     """You have created a new dish for your restaurant and want to add it to the menu
@@ -66,26 +78,52 @@ def add_dish_to_menu() -> models.Dish:
     Return your newly created dish
     """
     new_dish_name = "The Daily Special"
-    new_dished_served = "Franky's Corner"
-    new_dish_price = 1000
-    ingredients_new_dish = "cheese", "pasta", "salmon", "onions"
-    # check if dish is in db
-    new_dish = models.Dish.get_or_create(name=new_dish_name,
-                                         defaults={
-                                         'served_at': new_dished_served,
-                                         'price_in_cents': new_dish_price,
-                                         'ingredients': ingredients_new_dish})
+    restaurant_id = models.Restaurant.get_by_id(1)
+    new_dish_price = 10000
+    ingredients_new_dish = ["cheese", "pasta", "salmon", "onions"]
+   
 
     # check if ingredients are in db
-    for ingredient in ingredients_new_dish:
-        models.Ingredient.get_or_create(name=ingredient, defaults={'is_vegetarian': True, 'is_vegan': False, 'is_glutenfree': True})
+    cheese, created = models.Ingredient.get_or_create(name=ingredients_new_dish[0],
+                                             defaults={
+                                             'is_vegetarian': True,
+                                             'is_vegan': False,
+                                             'is_glutenfree': True,
+                                             },)
+
+    pasta, created = models.Ingredient.get_or_create(name=ingredients_new_dish[1],
+                                             defaults={
+                                             'is_vegetarian': True,
+                                             'is_vegan': True,
+                                             'is_glutenfree': False,
+                                             },)
+
+    salmon, created = models.Ingredient.get_or_create(name=ingredients_new_dish[2],
+                                             defaults={
+                                             'is_vegetarian': False,
+                                             'is_vegan': False,
+                                             'is_glutenfree': True,
+                                             },)
+
+    onions, created = models.Ingredient.get_or_create(name=ingredients_new_dish[3],
+                                             defaults={
+                                             'is_vegetarian': True,
+                                             'is_vegan': True,
+                                             'is_glutenfree': True,
+                                             },)
+
+    new_dish = models.Dish.create(name=new_dish_name,
+                                  served_at=restaurant_id,
+                                  price_in_cents=new_dish_price,
+                                  )
+    new_dish.ingredients.add([cheese, pasta, salmon, onions])   # ingredients is basicly its own table due to manytomanyfield
     
     return new_dish
 
 
 if __name__ == "__main__":
     # print(cheapest_dish())
-    print(vegetarian_dishes())
-    # print(best_average_rating())
+    # print(vegetarian_dishes())
+    print(best_average_rating())
     # print(dinner_date_possible())
     # print(add_dish_to_menu())
